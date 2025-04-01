@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de Currículos</title>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.4.0/dist/jspdf.umd.min.js"></script>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(120deg, #2980b9, #6dd5fa);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        width: 100%;
+        max-width: 450px;
+        animation: fadeIn 1s ease-out;
+      }
+
+      h1,
+      h2 {
+        color: #333;
+        font-family: "Roboto", sans-serif;
+        margin-bottom: 10px;
+        font-size: 1.3em;
+      }
+
+      input,
+      textarea,
+      button {
+        width: 100%;
+        padding: 6px;
+        margin: 6px 0;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        font-size: 0.8em;
+        box-sizing: border-box;
+      }
+
+      button {
+        background: #2980b9;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background 0.3s ease;
+      }
+
+      button:hover {
+        background: #1e6aa9;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .form-group {
+        margin-bottom: 8px;
+      }
+
+      .form-group label {
+        font-weight: bold;
+        margin-bottom: 3px;
+        display: block;
+        font-size: 0.9em;
+      }
+
+      .curriculum-header {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #2980b9;
+        margin-bottom: 6px;
+      }
+
+      .section-title {
+        font-size: 0.9em;
+        margin-top: 12px;
+        color: #333;
+        font-weight: bold;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Gerador de Currículos</h1>
+
+      <div id="auth">
+        <h2>Login</h2>
+        <div class="form-group">
+          <input type="email" id="loginEmail" placeholder="Email" required />
+        </div>
+        <div class="form-group">
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="Senha"
+            required
+          />
+        </div>
+        <button onclick="login()">Entrar</button>
+        <p>
+          Não tem uma conta?
+          <a href="#" onclick="showRegister()">Registre-se</a>
+        </p>
+      </div>
+
+      <div id="register" class="hidden">
+        <h2>Registrar</h2>
+        <div class="form-group">
+          <input type="email" id="registerEmail" placeholder="Email" required />
+        </div>
+        <div class="form-group">
+          <input
+            type="password"
+            id="registerPassword"
+            placeholder="Senha"
+            required
+          />
+        </div>
+        <button onclick="register()">Registrar</button>
+        <p>
+          Já tem uma conta? <a href="#" onclick="showLogin()">Faça login</a>
+        </p>
+      </div>
+
+      <div id="app" class="hidden">
+        <h2>Preencha seu Currículo</h2>
+        <div class="form-group">
+          <label for="name">Nome:</label>
+          <input type="text" id="name" placeholder="Nome" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" placeholder="Email" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">Telefone:</label>
+          <input type="text" id="phone" placeholder="Telefone" required />
+        </div>
+        <div class="form-group">
+          <label for="experience">Experiência Profissional:</label>
+          <textarea
+            id="experience"
+            placeholder="Experiência Profissional"
+            required
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="education">Formação Acadêmica:</label>
+          <textarea
+            id="education"
+            placeholder="Curso, Instituição, Ano"
+            required
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="certificates">Certificados:</label>
+          <textarea
+            id="certificates"
+            placeholder="Certificado, Instituição, Ano"
+            required
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="skills">Habilidades:</label>
+          <textarea id="skills" placeholder="Habilidades" required></textarea>
+        </div>
+        <button onclick="generatePDF()">Baixar PDF</button>
+      </div>
+    </div>
+
+    <script>
+      function showRegister() {
+        document.getElementById("auth").classList.add("hidden");
+        document.getElementById("register").classList.remove("hidden");
+      }
+
+      function showLogin() {
+        document.getElementById("register").classList.add("hidden");
+        document.getElementById("auth").classList.remove("hidden");
+      }
+
+      function login() {
+        const email = document.getElementById("loginEmail").value;
+        if (email) {
+          alert("Login bem-sucedido!");
+          document.getElementById("auth").classList.add("hidden");
+          document.getElementById("app").classList.remove("hidden");
+        }
+      }
+
+      function register() {
+        const email = document.getElementById("registerEmail").value;
+        if (email) {
+          alert("Registro bem-sucedido!");
+          showLogin();
+        }
+      }
+
+      function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const phone = document.getElementById("phone").value;
+        const experience = document.getElementById("experience").value;
+        const education = document.getElementById("education").value;
+        const certificates = document.getElementById("certificates").value;
+        const skills = document.getElementById("skills").value;
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+
+        doc.setFontSize(18);
+        doc.setFont("helvetica", "bold");
+        doc.text(name, 14, 20);
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Email: ${email}`, 14, 30);
+        doc.text(`Telefone: ${phone}`, 14, 40);
+
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("Experiência Profissional", 14, 60);
+        doc.setFont("helvetica", "normal");
+        doc.text(experience, 14, 70, { maxWidth: 180 });
+
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("Formação Acadêmica", 14, 100);
+        doc.setFont("helvetica", "normal");
+        doc.text(education, 14, 110, { maxWidth: 180 });
+
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("Certificados", 14, 140);
+        doc.setFont("helvetica", "normal");
+        doc.text(certificates, 14, 150, { maxWidth: 180 });
+
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("Habilidades", 14, 180);
+        doc.setFont("helvetica", "normal");
+        doc.text(skills, 14, 190, { maxWidth: 180 });
+
+        doc.save(`${name}_curriculo.pdf`);
+      }
+    </script>
+  </body>
+</html>
