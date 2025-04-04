@@ -1,4 +1,4 @@
-# Gerador-de-curriculos
+# Gerador de Currículos
 Meu primeiro projeto em html.
 Este é um projeto web simples que permite aos usuários criar currículos de forma rápida e eficiente, com a opção de gerar um PDF. O sistema conta com funcionalidades de login e registro (simulados no lado do cliente), preenchimento de informações do currículo e download do arquivo gerado.
 
